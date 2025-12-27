@@ -29,10 +29,6 @@ const AppRouter = () => {
       children: [
         {
           index: true,
-          element: <HomePage />,
-        },
-        {
-          // index: true,
           element: <LoginPage />,
         },
         {

@@ -8,21 +8,22 @@ import toastStore from "@stores/toastStore";
 import "react-toastify/dist/ReactToastify.css";
 
 const ToastNotifyWrapper: React.FC = observer(() => {
+  const { message, type, hideToast } = toastStore;
   useEffect(() => {
-    if (toastStore.message && toastStore.type) {
-      if (toastStore.type === "success") {
-        toast.success(toastStore.message);
-      } else if (toastStore.type === "error") {
-        toast.error(toastStore.message);
-      } else if (toastStore.type === "warning") {
-        toast.warning(toastStore.message);
+    if (message && type) {
+      if (type === "success") {
+        toast.success(message);
+      } else if (type === "error") {
+        toast.error(message);
+      } else if (type === "warning") {
+        toast.warning(message);
       }
-      toastStore.hideToast();
+      hideToast();
     }
-  }, [toastStore.message, toastStore.type]);
+  }, [message, type]);
 
   return (
-    <ToastContainer position="top-right" autoClose={4000} hideProgressBar />
+    <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar />
   );
 });
 

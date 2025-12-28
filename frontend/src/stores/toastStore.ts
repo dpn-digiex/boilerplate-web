@@ -10,15 +10,15 @@ class ToastStore {
     makeAutoObservable(this);
   }
 
-  showToast(message: string, type: "success" | "error" | "warning") {
+  showToast = (message: string, type: "success" | "error" | "warning") => {
     this.message = message;
     this.type = type;
-  }
+  };
 
-  hideToast() {
+  hideToast = () => {
     this.message = null;
     this.type = null;
-  }
+  };
 }
 
 const toastStore = new ToastStore();

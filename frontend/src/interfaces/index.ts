@@ -6,4 +6,10 @@ export interface AuthData {
   // some other data...
 }
 
+export interface Product {
+  name: string;
+  unitPrice: number;
+  quantity: number;
+}
+
 export type UserRoleType = "admin" | "editor" | "user";

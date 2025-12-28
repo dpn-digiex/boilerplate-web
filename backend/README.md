@@ -206,7 +206,7 @@ Kiểm tra trạng thái server.
 {
   "success": true,
   "message": "Service is healthy",
-  "responseObject": null,
+  "data": null,
   "statusCode": 200
 }
 ```
@@ -225,7 +225,7 @@ GET /users
 {
   "success": true,
   "message": "Users retrieved successfully",
-  "responseObject": [
+  "data": [
     {
       "id": 1,
       "name": "John Doe",
@@ -255,7 +255,7 @@ GET /users/{id}
 {
   "success": true,
   "message": "User retrieved successfully",
-  "responseObject": {
+  "data": {
     "id": 1,
     "name": "John Doe",
     "email": "john@example.com",

@@ -1,15 +1,24 @@
 # Backend API Documentation
 
+## 🌿 Git Branches
+
+This repository has two main branches for different database implementations:
+
+- **`master-mongodb`**: For using MongoDB as the database
+- **`master-postgres`**: For using PostgreSQL with Prisma ORM
+
+**Note**: Make sure to checkout the appropriate branch based on your database choice before starting development.
+
 ## 📋 Summary
 
-Backend API được xây dựng bằng **Express.js** với **TypeScript**, cung cấp RESTful API với các tính năng:
+Backend API built with **Express.js** and **TypeScript**, providing RESTful API with the following features:
 
 - 🔒 **Security**: Helmet.js, CORS, Rate Limiting
-- 📝 **Validation**: Zod schema validation với OpenAPI integration
-- 📊 **Documentation**: Swagger/OpenAPI tự động
+- 📝 **Validation**: Zod schema validation with OpenAPI integration
+- 📊 **Documentation**: Auto-generated Swagger/OpenAPI
 - 🏗️ **Architecture**: Layered architecture (Controller → Service → Repository)
 - 🧪 **Testing**: Vitest test framework
-- 📦 **Type Safety**: Full TypeScript với strict mode
+- 📦 **Type Safety**: Full TypeScript with strict mode
 - 🚀 **Production Ready**: Docker support, error handling, logging
 
 ## 📁 Project Layout
@@ -17,7 +26,7 @@ Backend API được xây dựng bằng **Express.js** với **TypeScript**, cun
 ```
 backend/
 ├── src/
-│   ├── api/                    # API modules (theo domain)
+│   ├── api/                    # API modules (domain-based)
 │   │   ├── healthCheck/        # Health check endpoint
 │   │   │   ├── __tests__/      # Unit tests
 │   │   │   └── healthCheckRouter.ts
@@ -62,7 +71,6 @@ backend/
 ├── tsconfig.json               # TypeScript configuration
 ├── vite.config.mts            # Build configuration (TSUP)
 └── yarn.lock
-
 ```
 
 ## 🏗️ Architecture
@@ -95,7 +103,7 @@ backend/
 
 1. **Request** → Express Router
 2. **Middleware** → Rate limiting, CORS, Helmet, Logging
-3. **Router** → Route handler với Zod validation
+3. **Router** → Route handler with Zod validation
 4. **Controller** → Process request, call service
 5. **Service** → Business logic
 6. **Repository** → Data access
@@ -103,17 +111,17 @@ backend/
 
 ### Entry Point (`index.ts`)
 
-File `index.ts` là entry point duy nhất của ứng dụng, bao gồm:
+The `index.ts` file is the single entry point of the application, including:
 
-1. **Zod Extension**: Import và extend Zod với OpenAPI support
-2. **Express App Setup**: Tạo Express app instance
+1. **Zod Extension**: Import and extend Zod with OpenAPI support
+2. **Express App Setup**: Create Express app instance
 3. **Middleware Configuration**: CORS, Helmet, Rate Limiting, Request Logging
-4. **Route Registration**: Đăng ký tất cả routes
+4. **Route Registration**: Register all routes
 5. **Error Handler**: Global error handling middleware
-6. **Server Startup**: Khởi động HTTP server
-7. **Graceful Shutdown**: Xử lý SIGINT/SIGTERM signals
+6. **Server Startup**: Start HTTP server
+7. **Graceful Shutdown**: Handle SIGINT/SIGTERM signals
 
-**Exports**: `app` và `logger` được export để sử dụng trong tests và các modules khác.
+**Exports**: `app` and `logger` are exported for use in tests and other modules.
 
 ## 🚀 Getting Started
 
@@ -132,7 +140,7 @@ yarn install
 
 ### Environment Configuration
 
-Cấu hình các biến môi trường:
+Configure environment variables:
 
 ```env
 NODE_ENV=development
@@ -146,10 +154,10 @@ COMMON_RATE_LIMIT_WINDOW_MS=1000
 ### Development
 
 ```bash
-# Run development server với hot reload
+# Run development server with hot reload
 yarn dev
 
-# Server sẽ chạy tại http://localhost:5000
+# Server will run at http://localhost:5000
 ```
 
 ### Production Build
@@ -168,7 +176,7 @@ yarn start
 # Run tests
 yarn test
 
-# Run tests với coverage
+# Run tests with coverage
 yarn test -- --coverage
 ```
 
@@ -190,7 +198,7 @@ yarn format
 ### Base URL
 
 - **Development**: `http://localhost:5000`
-- **Production**: (configure theo environment)
+- **Production**: (configure via environment)
 
 ### Health Check
 
@@ -198,7 +206,7 @@ yarn format
 GET /health-check
 ```
 
-Kiểm tra trạng thái server.
+Check server status.
 
 **Response:**
 
@@ -269,7 +277,7 @@ GET /users/{id}
 
 ### API Documentation
 
-Swagger UI có sẵn tại:
+Swagger UI available at:
 
 - **Swagger UI**: `http://localhost:5000/`
 - **OpenAPI JSON**: `http://localhost:5000/swagger.json`
@@ -289,17 +297,17 @@ Swagger UI có sẵn tại:
 
 ### Path Aliases
 
-Dự án sử dụng path aliases để import dễ dàng hơn:
+The project uses path aliases for easier imports:
 
 ```typescript
-// Thay vì
+// Instead of
 import { userService } from "../../../api/user/userService";
 
-// Dùng
+// Use
 import { userService } from "@/api/user/userService";
 ```
 
-Path alias được cấu hình trong `tsconfig.json`:
+Path alias is configured in `tsconfig.json`:
 
 - `@/*` → `src/*`
 
@@ -312,25 +320,25 @@ Path alias được cấu hình trong `tsconfig.json`:
 
 ### 2. CORS
 
-- Cấu hình cross-origin requests
-- Chỉ cho phép origin được chỉ định
+- Configure cross-origin requests
+- Only allow specified origin
 
 ### 3. Rate Limiting
 
-- Giới hạn số request từ một IP
-- Sử dụng `ipKeyGenerator` để hỗ trợ IPv6
-- Cấu hình: `COMMON_RATE_LIMIT_MAX_REQUESTS` requests trong `COMMON_RATE_LIMIT_WINDOW_MS` ms
+- Limit number of requests from an IP
+- Use `ipKeyGenerator` for IPv6 support
+- Configuration: `COMMON_RATE_LIMIT_MAX_REQUESTS` requests within `COMMON_RATE_LIMIT_WINDOW_MS` ms
 
 ### 4. Input Validation
 
-- Tất cả input được validate bằng Zod schemas
-- Automatic validation errors handling
+- All inputs are validated with Zod schemas
+- Automatic validation error handling
 
 ## 📝 Code Patterns
 
 ### Service Response Pattern
 
-Tất cả API responses sử dụng `ServiceResponse` class:
+All API responses use the `ServiceResponse` class:
 
 ```typescript
 // Success response
@@ -342,7 +350,7 @@ const response = ServiceResponse.failure("Error message", null, StatusCodes.BAD_
 
 ### Request Validation
 
-Sử dụng Zod schemas với `validateRequest` middleware:
+Use Zod schemas with `validateRequest` middleware:
 
 ```typescript
 // Define schema
@@ -356,7 +364,7 @@ userRouter.get("/:id", validateRequest(GetUserSchema), userController.getUser);
 
 ### OpenAPI Documentation
 
-Tự động generate OpenAPI docs từ Zod schemas:
+Auto-generate OpenAPI docs from Zod schemas:
 
 ```typescript
 userRegistry.registerPath({
@@ -396,62 +404,6 @@ docker run -p 8081:8081 \
 - Build command: `npm run build`
 - Exposed port: `8081`
 - Start command: `npm run start`
-
-## ⚠️ Important Notes
-
-### 1. Zod OpenAPI Extension
-
-**⚠️ CRITICAL**: `extendZodWithOpenApi` phải được gọi **trước khi** bất kỳ Zod schema nào được tạo.
-
-File `src/common/utils/zodExtension.ts` phải được import ở đầu `index.ts`:
-
-```typescript
-import "@/common/utils/zodExtension"; // Must be first!
-```
-
-**Không** extract nested schemas từ parent schema (như `GetUserSchema.shape.params`), vì sẽ mất OpenAPI extensions.
-
-**Lưu ý**: Toàn bộ server setup (Express app configuration, middleware, routes, và server startup) được tích hợp trong file `index.ts`. File `app` và `logger` được export để có thể import trong tests hoặc các modules khác.
-
-### 2. Rate Limiter
-
-Sử dụng `ipKeyGenerator` từ `express-rate-limit` để xử lý IPv6:
-
-```typescript
-import { ipKeyGenerator } from "express-rate-limit";
-
-keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown");
-```
-
-### 3. Environment Variables
-
-Sử dụng `envalid` để validate environment variables. Tất cả env vars phải được định nghĩa trong `envConfig.ts`.
-
-### 4. Error Handling
-
-Tất cả errors được handle bởi global error handler middleware ở cuối middleware stack. Đảm bảo error handler được đặt **sau** tất cả routes.
-
-### 5. Request Logging
-
-Pino logger được sử dụng cho request logging. Logs được format bằng `pino-pretty` trong development.
-
-### 6. Type Safety
-
-- Sử dụng TypeScript strict mode
-- Tất cả API responses được type-safe với Zod schemas
-- ServiceResponse pattern đảm bảo consistent response structure
-
-### 7. Testing
-
-- Unit tests được đặt trong `__tests__/` folders
-- Sử dụng Vitest framework
-- Test files có pattern `*.test.ts`
-
-### 8. Build Process
-
-- TypeScript được compile bằng `tsup`
-- Source maps được generate cho debugging
-- Test files được exclude khỏi build
 
 ## 📚 Tech Stack
 

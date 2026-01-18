@@ -1,30 +1,44 @@
-import type { User } from "@/api/user/userModel";
-
-export const users: User[] = [
-  {
-    id: 1,
-    name: "Alice",
-    email: "alice@example.com",
-    age: 42,
-    createdAt: new Date(),
-    updatedAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days later
-  },
-  {
-    id: 2,
-    name: "Robert",
-    email: "Robert@example.com",
-    age: 21,
-    createdAt: new Date(),
-    updatedAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days later
-  },
-];
+import type { UserResponse } from "./userModel";
+import { UserModel, type UserLean } from "./userSchema";
 
 export class UserRepository {
-  async findAllAsync(): Promise<User[]> {
-    return users;
+  /**
+   * Find all users
+   */
+  async findAllAsync(): Promise<UserResponse[]> {
+    const users = await UserModel.find().lean<UserLean[]>();
+    return users.map((user) => this.toUserResponse(user));
   }
 
-  async findByIdAsync(id: number): Promise<User | null> {
-    return users.find((user) => user.id === id) || null;
+  /**
+   * Find user by ID
+   */
+  async findByIdAsync(id: string): Promise<UserResponse | null> {
+    if (!this.isValidObjectId(id)) {
+      return null;
+    }
+    const user = await UserModel.findById(id).lean<UserLean>();
+    return user ? this.toUserResponse(user) : null;
+  }
+
+  /**
+   * Convert Mongoose lean document to UserResponse DTO
+   */
+  private toUserResponse(user: UserLean): UserResponse {
+    return {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      age: user.age,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+  }
+
+  /**
+   * Validate MongoDB ObjectId format
+   */
+  private isValidObjectId(id: string): boolean {
+    return /^[0-9a-fA-F]{24}$/.test(id);
   }
 }

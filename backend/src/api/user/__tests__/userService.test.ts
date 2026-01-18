@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import type { Mock } from "vitest";
 
-import type { User } from "@/api/user/userModel";
+import type { UserResponse } from "@/api/user/userModel";
 import { UserRepository } from "@/api/user/userRepository";
 import { UserService } from "@/api/user/userService";
 
@@ -11,9 +11,9 @@ describe("userService", () => {
   let userServiceInstance: UserService;
   let userRepositoryInstance: UserRepository;
 
-  const mockUsers: User[] = [
+  const mockUsers: UserResponse[] = [
     {
-      id: 1,
+      id: "507f1f77bcf86cd799439011",
       name: "Alice",
       email: "alice@example.com",
       age: 42,
@@ -21,7 +21,7 @@ describe("userService", () => {
       updatedAt: new Date(),
     },
     {
-      id: 2,
+      id: "507f1f77bcf86cd799439012",
       name: "Bob",
       email: "bob@example.com",
       age: 21,
@@ -82,7 +82,7 @@ describe("userService", () => {
   describe("findById", () => {
     it("returns a user for a valid ID", async () => {
       // Arrange
-      const testId = 1;
+      const testId = "507f1f77bcf86cd799439011";
       const mockUser = mockUsers.find((user) => user.id === testId);
       (userRepositoryInstance.findByIdAsync as Mock).mockReturnValue(mockUser);
 
@@ -98,7 +98,7 @@ describe("userService", () => {
 
     it("handles errors for findByIdAsync", async () => {
       // Arrange
-      const testId = 1;
+      const testId = "507f1f77bcf86cd799439011";
       (userRepositoryInstance.findByIdAsync as Mock).mockRejectedValue(new Error("Database error"));
 
       // Act
@@ -113,7 +113,7 @@ describe("userService", () => {
 
     it("returns a not found error for non-existent ID", async () => {
       // Arrange
-      const testId = 1;
+      const testId = "507f1f77bcf86cd799439011";
       (userRepositoryInstance.findByIdAsync as Mock).mockReturnValue(null);
 
       // Act

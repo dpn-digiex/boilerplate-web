@@ -3,10 +3,9 @@ import { z } from "zod";
 import "@/common/utils/zodExtension";
 import { commonValidations } from "@/common/utils/commonValidation";
 
-export type User = z.infer<typeof UserSchema>;
-export const UserSchema = z
+export const UserResponseSchema = z
   .object({
-    id: z.number(),
+    id: z.string(),
     name: z.string(),
     email: z.string().email(),
     age: z.number(),
@@ -15,7 +14,9 @@ export const UserSchema = z
   })
   .openapi("User");
 
+export type UserResponse = z.infer<typeof UserResponseSchema>;
+
 // Input Validation for 'GET users/:id' endpoint
-export const GetUserSchema = z.object({
-  params: z.object({ id: commonValidations.id }).strict(),
+export const GetUserParamsSchema = z.object({
+  params: z.object({ id: commonValidations.id }).strict(), // MongoDB ObjectId validation
 });

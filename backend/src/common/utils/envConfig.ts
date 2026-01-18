@@ -23,4 +23,8 @@ export const env = cleanEnv(process.env, {
   COMMON_RATE_LIMIT_WINDOW_MS: num({
     default: 60000, // 1 minute
   }),
+  // MongoDB configuration
+  MONGODB_URI: str({
+    default: "mongodb://localhost:27017/test-connection", // change to your own local MongoDB URI
+  }),
 });

@@ -3,20 +3,20 @@ import express, { type Router } from "express";
 import { z } from "zod";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { GetUserSchema, UserSchema } from "@/api/user/userModel";
+import { GetUserParamsSchema, UserResponseSchema } from "@/api/user/userModel";
 import { validateRequest } from "@/common/utils/httpHandlers";
 import { userController } from "./userController";
 
 export const userRegistry = new OpenAPIRegistry();
 export const userRouter: Router = express.Router();
 
-userRegistry.register("User", UserSchema);
+userRegistry.register("User", UserResponseSchema);
 
 userRegistry.registerPath({
   method: "get",
   path: "/users",
   tags: ["User"],
-  responses: createApiResponse(z.array(UserSchema), "Success"),
+  responses: createApiResponse(z.array(UserResponseSchema), "Success"),
 });
 
 userRouter.get("/", userController.getUsers);
@@ -27,10 +27,10 @@ userRegistry.registerPath({
   tags: ["User"],
   request: {
     params: z.object({
-      id: z.string().describe("User ID"),
+      id: z.string().describe("User ID (MongoDB ObjectId)"),
     }),
   },
-  responses: createApiResponse(UserSchema, "Success"),
+  responses: createApiResponse(UserResponseSchema, "Success"),
 });
 
-userRouter.get("/:id", validateRequest(GetUserSchema), userController.getUser);
+userRouter.get("/:id", validateRequest(GetUserParamsSchema), userController.getUser);

@@ -3,17 +3,16 @@ import "@/common/utils/zodExtension"; // Must be imported first to extend Zod
 import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
-import { pino } from "pino";
-
 import { openAPIRouter } from "@/api-docs/openAPIRouter";
 import { healthCheckRouter } from "@/api/healthCheck/healthCheckRouter";
 import { userRouter } from "@/api/user/userRouter";
+import { disconnectMongoDB, testConnection } from "@/common/db/mongo/client";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
+import { logger } from "@/common/utils/logger";
 import { env } from "@/common/utils/envConfig";
 
-export const logger = pino({ name: "server start" });
 export const app: Express = express();
 
 // Set the application to trust the reverse proxy
@@ -40,16 +39,20 @@ app.use(openAPIRouter);
 app.use(errorHandler());
 
 // Start server
-const server = app.listen(env.PORT, () => {
+const server = app.listen(env.PORT, async () => {
   const { NODE_ENV, HOST, PORT } = env;
   logger.info(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`);
+
+  // Test database connection
+  await testConnection();
 });
 
 // Graceful shutdown
-const onCloseSignal = () => {
+const onCloseSignal = async () => {
   logger.info("sigint received, shutting down");
-  server.close(() => {
+  server.close(async () => {
     logger.info("server closed");
+    await disconnectMongoDB();
     process.exit();
   });
   setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s

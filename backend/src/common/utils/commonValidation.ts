@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const commonValidations = {
+  // MongoDB ObjectId validation (24 hex characters)
   id: z
     .string()
-    .refine((data) => !Number.isNaN(Number(data)), "ID must be a numeric value")
-    .transform(Number)
-    .refine((num) => num > 0, "ID must be a positive number"),
+    .min(1, "ID is required")
+    .regex(/^[0-9a-fA-F]{24}$/, "ID must be a valid MongoDB ObjectId"),
   // ... other common validations
 };

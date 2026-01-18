@@ -1,30 +1,39 @@
 import type { User } from "@/api/user/userModel";
-
-export const users: User[] = [
-  {
-    id: 1,
-    name: "Alice",
-    email: "alice@example.com",
-    age: 42,
-    createdAt: new Date(),
-    updatedAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days later
-  },
-  {
-    id: 2,
-    name: "Robert",
-    email: "Robert@example.com",
-    age: 21,
-    createdAt: new Date(),
-    updatedAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days later
-  },
-];
+import { prisma } from "@/common/db/postgres/client";
+import type { User as PrismaUser } from "@prisma/client";
 
 export class UserRepository {
   async findAllAsync(): Promise<User[]> {
-    return users;
+    const users = await prisma.user.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
+    // Prisma automatically maps snake_case to camelCase based on schema
+    return users.map((user: PrismaUser) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      age: user.age,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
   }
 
   async findByIdAsync(id: number): Promise<User | null> {
-    return users.find((user) => user.id === id) || null;
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+    if (!user) {
+      return null;
+    }
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      age: user.age,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 }

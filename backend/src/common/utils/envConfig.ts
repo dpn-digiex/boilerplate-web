@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { cleanEnv, host, num, port, str } from "envalid";
 
+// Load .env file first
 dotenv.config();
 
 export const env = cleanEnv(process.env, {
@@ -22,5 +23,25 @@ export const env = cleanEnv(process.env, {
   }),
   COMMON_RATE_LIMIT_WINDOW_MS: num({
     default: 60000, // 1 minute
+  }),
+  // Database configuration (for Prisma)
+  DATABASE_URL: str({
+    default: "postgresql://postgres:postgres@localhost:5432/postgres?schema=public",
+  }),
+  // Legacy database configuration (kept for backward compatibility if needed)
+  DB_HOST: str({
+    default: "localhost",
+  }),
+  DB_PORT: num({
+    default: 5432,
+  }),
+  DB_NAME: str({
+    default: "postgres",
+  }),
+  DB_USER: str({
+    default: "postgres",
+  }),
+  DB_PASSWORD: str({
+    default: "postgres",
   }),
 });

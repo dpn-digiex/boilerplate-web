@@ -11,6 +11,7 @@ import { userRouter } from "@/api/user/userRouter";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
+import { closePrisma, testConnection } from "@/common/db/postgres/client";
 import { env } from "@/common/utils/envConfig";
 
 export const logger = pino({ name: "server start" });
@@ -40,16 +41,20 @@ app.use(openAPIRouter);
 app.use(errorHandler());
 
 // Start server
-const server = app.listen(env.PORT, () => {
+const server = app.listen(env.PORT, async () => {
   const { NODE_ENV, HOST, PORT } = env;
   logger.info(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`);
+
+  // Test database connection
+  await testConnection();
 });
 
 // Graceful shutdown
-const onCloseSignal = () => {
+const onCloseSignal = async () => {
   logger.info("sigint received, shutting down");
-  server.close(() => {
+  server.close(async () => {
     logger.info("server closed");
+    await closePrisma();
     process.exit();
   });
   setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
